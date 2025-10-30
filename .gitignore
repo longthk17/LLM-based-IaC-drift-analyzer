@@ -1,0 +1,9 @@
+# ignore resouce teraform 
+RESSOURCE/*
+output.json
+.vscode/
+__pycache__/
+!RESSOURCE/readme.md
+venv/
+drift_output.json
+repos/*
