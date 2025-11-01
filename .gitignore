@@ -7,3 +7,5 @@ __pycache__/
 venv/
 drift_output.json
 repos/*
+output/
+example.json
