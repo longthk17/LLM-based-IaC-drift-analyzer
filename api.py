@@ -68,7 +68,7 @@ async def github_webhook(request: Request):
 
         results = run_drift_analyzer([repo_url])  # đồng bộ vẫn được
         print(f"✅ Webhook xử lý xong cho repo: {repo_url}")
-        print("kimlong211")
+        print("kimlong")
 
         return {
             "status": "success",
