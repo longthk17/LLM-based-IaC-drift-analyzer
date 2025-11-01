@@ -1,11 +1,11 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from typing import List
 import json
 import os
 
 from core.drift_analyzer import run_drift_analyzer
-from config import OUTPUT_DIR, OUTPUT_FILE  # Nếu vẫn muốn giữ file tổng hợp
+from config import OUTPUT_DIR, OUTPUT_FILE
 
 app = FastAPI(
     title="IaC Drift Analyzer API",
@@ -31,17 +31,15 @@ def analyze_iac(request: AnalyzeRequest):
     print(f"🚀 Start analyzing {len(request.repos)} repo(s)...")
 
     try:
-        # 🔹 Gọi hàm đồng bộ
         results = run_drift_analyzer(request.repos)
 
-        # Ghi file JSON tổng hợp (tuỳ chọn)
+        # Ghi file tổng hợp (tuỳ chọn)
         os.makedirs(OUTPUT_DIR, exist_ok=True)
         with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
             json.dump(results, f, ensure_ascii=False, indent=4)
 
         print(f"✅ Done. {len(results)} IaC chunks processed.")
 
-        # Lấy danh sách owner đã detect
         owners = sorted(set(r["owner"] for r in results if r.get("owner")))
 
         return {
@@ -54,3 +52,29 @@ def analyze_iac(request: AnalyzeRequest):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Server error: {e}")
+
+
+@app.post("/webhook/github")
+async def github_webhook(request: Request):
+    try:
+        payload = await request.json()  # async method
+        repo_url = payload.get("repository", {}).get("clone_url")
+        if not repo_url:
+            raise HTTPException(
+                status_code=400, detail="Không tìm thấy repository URL trong payload"
+            )
+
+        print(f"📩 Nhận webhook từ GitHub: {repo_url}")
+
+        results = run_drift_analyzer([repo_url])  # đồng bộ vẫn được
+        print(f"✅ Webhook xử lý xong cho repo: {repo_url}")
+
+        return {
+            "status": "success",
+            "repo": repo_url,
+            "chunks": len(results),
+            "output_dir": OUTPUT_DIR,
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
