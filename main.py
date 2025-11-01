@@ -10,7 +10,7 @@ OUTPUT_FILE = config.OUTPUT_FILE
 
 if __name__ == "__main__":
     repos = [
-        "https://github.com/haihpse150218/terraform-on-aws-ec2.git",
+        "https://github.com/longthk17/terraform-aws-examples",
     ]
 
     print(f"🚀 Starting IaC Drift Analyzer for {len(repos)} repo(s)...")

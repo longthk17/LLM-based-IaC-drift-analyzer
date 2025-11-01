@@ -6,9 +6,7 @@ WEBHOOK_URL = (
 )
 
 payload = {
-    "repository": {
-        "clone_url": "https://github.com/haihpse150218/terraform-on-aws-ec2.git"
-    },
+    "repository": {"clone_url": "https://github.com/longthk17/terraform-aws-examples"},
     "ref": "refs/heads/main",
     "pusher": {"name": "testuser"},
     "head_commit": {"id": "dummycommit123"},

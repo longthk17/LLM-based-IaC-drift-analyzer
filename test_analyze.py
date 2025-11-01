@@ -3,9 +3,7 @@ import requests
 
 
 ANALYZE_URL = "http://127.0.0.1:8000/analyze"
-payload_analyze = {
-    "repos": ["https://github.com/haihpse150218/terraform-on-aws-ec2.git"]
-}
+payload_analyze = {"repos": ["https://github.com/longthk17/terraform-aws-examples"]}
 
 print("🚀 Sending request to /analyze API...")
 try:
