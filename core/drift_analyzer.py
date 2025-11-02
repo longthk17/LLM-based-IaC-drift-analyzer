@@ -7,8 +7,6 @@ from .git_handler import clone_or_pull
 from .terraform_parser import process_directory
 from .jsonl_writer import write_jsonl_safely
 
-# OWNER = config.OWNER
-
 
 def extract_owner_repo(repo_url: str):
     """Lấy owner và repo name từ URL GitHub."""
