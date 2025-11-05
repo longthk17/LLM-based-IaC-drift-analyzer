@@ -4,7 +4,7 @@ from botocore.exceptions import ClientError
 
 import config
 
-bedrock = boto3.client("bedrock-agent")
+bedrock = boto3.client("bedrock-agent", region_name="us-east-1")
 
 # ⚙️ Knowledge Base ID cố định của bạn
 KNOWLEDGE_BASE_ID = config.KNOWLEDGE_BASE_ID
@@ -15,8 +15,13 @@ def sync_data_source_by_repo(s3_repo_path: str):
     Sync hoặc tạo mới Data Source cho từng repo trong Bedrock Knowledge Base.
     :param s3_repo_path: ví dụ 's3://drift-iac-kb/repoA/'
     """
-    # Tách tên repo từ path
-    repo_name = s3_repo_path.rstrip("/").split("/")[-1]
+    # Chuẩn hóa path
+    s3_repo_path = s3_repo_path.rstrip("/") + "/"
+
+    # Tách bucket và prefix chính xác
+    no_scheme = s3_repo_path.replace("s3://", "")
+    bucket_name, prefix = no_scheme.split("/", 1)
+    repo_name = prefix.rstrip("/").split("/")[-1]
 
     print(f"🔍 Checking data source for repo: {repo_name}")
 
@@ -34,13 +39,6 @@ def sync_data_source_by_repo(s3_repo_path: str):
     # 2️⃣ Nếu chưa có → tạo mới Data Source
     if not ds:
         print(f"🆕 Creating new data source for {repo_name}")
-        bucket_name = s3_repo_path.replace("s3://", "").split("/")[0]
-        prefix = (
-            "/".join(s3_repo_path.replace("s3://", "").split("/")[1:]).rstrip("/") + "/"
-        )
-        bucket_arn = f"arn:aws:s3:::{bucket_name}"
-        print("bucket_arn", bucket_arn)
-        print("prefix", prefix)
 
         ds = bedrock.create_data_source(
             name=repo_name,
@@ -48,8 +46,8 @@ def sync_data_source_by_repo(s3_repo_path: str):
             dataSourceConfiguration={
                 "type": "S3",  # ✅ BẮT BUỘC
                 "s3Configuration": {
-                    "bucketArn": bucket_arn,
-                    "inclusionPrefixes": [f"{repo_name}/"],
+                    "bucketArn": f"arn:aws:s3:::{bucket_name}",
+                    "inclusionPrefixes": [prefix],  # ✅ SỬA LẠI CHỖ NÀY
                 },
             },
             description=f"Data source for {repo_name}",
