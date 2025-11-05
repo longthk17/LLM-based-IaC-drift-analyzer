@@ -1,8 +1,11 @@
 import json
 import requests
+import config
+
+DOMAIN_PUBLIC = config.DOMAIN_PUBLIC
 
 
-ANALYZE_URL = "http://127.0.0.1:8000/analyze"
+ANALYZE_URL = f"{DOMAIN_PUBLIC}/analyze"
 payload_analyze = {"repos": ["https://github.com/longthk17/terraform-aws-examples"]}
 
 print("🚀 Sending request to /analyze API...")

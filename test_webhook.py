@@ -1,9 +1,10 @@
 import requests
 import json
+import config
 
-WEBHOOK_URL = (
-    "https://uncontributory-jacquline-schmalziest.ngrok-free.dev/webhook/github"
-)
+DOMAIN_PUBLIC = config.DOMAIN_PUBLIC
+
+WEBHOOK_URL = f"{DOMAIN_PUBLIC}/webhook/github"
 
 payload = {
     "repository": {"clone_url": "https://github.com/longthk17/terraform-aws-examples"},
