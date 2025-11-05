@@ -55,6 +55,9 @@ def run_drift_analyzer(repos):
         repo_dir, commit_sha = clone_or_pull(repo_url)
         print(f"🔍 Processing repo: {repo_url} @ {commit_sha}")
 
+        if repo_dir is None:
+            print(f"⚠️ Bỏ qua {repo_url} vì clone thất bại.\n")
+            continue  # <-- Quan trọng: tránh đưa None vào process_directory()
         chunks = process_directory(repo_dir)
         normalized_chunks = []
         for chunk in chunks:

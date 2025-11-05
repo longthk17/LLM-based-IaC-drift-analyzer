@@ -1,1 +1,4 @@
-["https://github.com/longthk17/terraform-aws-examples"]
+[
+  "https://github.com/longthk17/terraform-aws-examples",
+  "https://github.com/haihpse150218/terraform-on-aws-ec2"
+]
